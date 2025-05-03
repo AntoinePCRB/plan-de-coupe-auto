@@ -1,7 +1,7 @@
 import unittest
 from models.rectangle import Rectangle
 
-class TestRectangle(unittest.TestCase):
+class TestRectangleInit(unittest.TestCase):
 
     def test_init_works(self):
         r = Rectangle(width=2, length=4)
@@ -50,7 +50,3 @@ class TestRectangle(unittest.TestCase):
             Rectangle(width=2, length= 2, nb_rotation=-1)
         the_exception = te.exception
         self.assertEqual(the_exception.args[0], f"nb_rotation must be greater than 0, got {-1}")
-
-if __name__ == "__main__":
-    import unittest
-    unittest.main()
