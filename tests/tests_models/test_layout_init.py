@@ -32,7 +32,7 @@ class TestLayoutInit(unittest.TestCase):
         with self.assertRaises(TypeError) as te:
             Layout(max_width=1.0, max_length=2)
         the_exception = te.exception
-        self.assertEqual(the_exception.args[0], f"max_width must be an int, got {type(1.0).__name__}")
+        self.assertEqual(the_exception.args[0], f"max_width must be int, got {type(1.0).__name__}")
 
     def test_init_max_width_inf_or_0(self): #1011
         with self.assertRaises(ValueError) as te:
@@ -48,7 +48,7 @@ class TestLayoutInit(unittest.TestCase):
         with self.assertRaises(TypeError) as te:
             Layout(max_width=1, max_length=2.0)
         the_exception = te.exception
-        self.assertEqual(the_exception.args[0], f"max_length must be an int, got {type(2.0).__name__}")
+        self.assertEqual(the_exception.args[0], f"max_length must be int, got {type(2.0).__name__}")
 
     def test_init_max_length_inf_or_0(self): #1021
         with self.assertRaises(ValueError) as te:
@@ -64,7 +64,7 @@ class TestLayoutInit(unittest.TestCase):
         with self.assertRaises(TypeError) as te:
             Layout(max_width=1, max_length=2, placement="str")
         the_exception = te.exception
-        self.assertEqual(the_exception.args[0], f"placement must be a list, got {type("str").__name__}")
+        self.assertEqual(the_exception.args[0], f"placement must be list, got {type("str").__name__}")
 
     def test_init_placement_wrong_keys(self): #1031
         test_placement = [{"id": "Object1", "x": 1, "y": 2, "width": 10, "length": 5},
@@ -72,7 +72,7 @@ class TestLayoutInit(unittest.TestCase):
         with self.assertRaises(KeyError) as te:
             Layout(max_width=1, max_length=2, placement=test_placement)
         the_exception = te.exception
-        self.assertEqual(the_exception.args[0], f"Missing keys in {test_placement[1]} : {"{'id'}"}")
+        self.assertEqual(the_exception.args[0], f"Missing keys in dict_keys(['wrong_id', 'x', 'y', 'width', 'length']) : {"{'id'}"}")
 
     def test_init_placement_wrong_type_in_list_id(self): #1040
         test_placement = [{"id": "Object1", "x": 1, "y": 2, "width": 10, "length": 5},
@@ -80,7 +80,7 @@ class TestLayoutInit(unittest.TestCase):
         with self.assertRaises(TypeError) as te:
             Layout(max_width=1, max_length=2, placement=test_placement)
         the_exception = te.exception
-        self.assertEqual(the_exception.args[0], f"id must be a str, got {type(test_placement[1]['id']).__name__}")
+        self.assertEqual(the_exception.args[0], f"id must be str, got {type(test_placement[1]['id']).__name__}")
 
     def test_init_placement_wrong_type_in_list_x(self): #1050
         test_placement = [{"id": "Object1", "x": 1, "y": 2, "width": 10, "length": 5},
@@ -88,7 +88,7 @@ class TestLayoutInit(unittest.TestCase):
         with self.assertRaises(TypeError) as te:
             Layout(max_width=1, max_length=2, placement=test_placement)
         the_exception = te.exception
-        self.assertEqual(the_exception.args[0], f"x must be an int, got {type(test_placement[1]['x']).__name__}")
+        self.assertEqual(the_exception.args[0], f"x must be int, got {type(test_placement[1]['x']).__name__}")
 
     def test_init_placement_list_x_inf_0(self): #1051
         test_placement = [{"id": "Object1", "x": 1, "y": 2, "width": 10, "length": 5},
@@ -96,7 +96,7 @@ class TestLayoutInit(unittest.TestCase):
         with self.assertRaises(ValueError) as te:
             Layout(max_width=1, max_length=2, placement=test_placement)
         the_exception = te.exception
-        self.assertEqual(the_exception.args[0], f"x must be equal or greater than 0, got {test_placement[1]['x']} in {test_placement[1]}")
+        self.assertEqual(the_exception.args[0], f"x must be greater than 0, got {test_placement[1]['x']}")
 
     def test_init_placement_wrong_type_in_list_y(self): #1060
         test_placement = [{"id": "Object1", "x": 1, "y": 2, "width": 10, "length": 5},
@@ -104,7 +104,7 @@ class TestLayoutInit(unittest.TestCase):
         with self.assertRaises(TypeError) as te:
             Layout(max_width=1, max_length=2, placement=test_placement)
         the_exception = te.exception
-        self.assertEqual(the_exception.args[0], f"y must be an int, got {type(test_placement[1]['y']).__name__}")
+        self.assertEqual(the_exception.args[0], f"y must be int, got {type(test_placement[1]['y']).__name__}")
 
     def test_init_placement_list_y_inf_0(self): #1061
         test_placement = [{"id": "Object1", "x": 1, "y": 2, "width": 10, "length": 5},
@@ -112,7 +112,7 @@ class TestLayoutInit(unittest.TestCase):
         with self.assertRaises(ValueError) as te:
             Layout(max_width=1, max_length=2, placement=test_placement)
         the_exception = te.exception
-        self.assertEqual(the_exception.args[0], f"y must be equal or greater than 0, got {test_placement[1]['y']} in {test_placement[1]}")
+        self.assertEqual(the_exception.args[0], f"y must be greater than 0, got {test_placement[1]['y']}")
 
     def test_init_placement_wrong_type_in_list_width(self): #1070
         test_placement = [{"id": "Object1", "x": 1, "y": 2, "width": 10, "length": 5},
@@ -120,7 +120,7 @@ class TestLayoutInit(unittest.TestCase):
         with self.assertRaises(TypeError) as te:
             Layout(max_width=1, max_length=2, placement=test_placement)
         the_exception = te.exception
-        self.assertEqual(the_exception.args[0], f"width must be an int, got {type(test_placement[1]['width']).__name__}")
+        self.assertEqual(the_exception.args[0], f"width must be int, got {type(test_placement[1]['width']).__name__}")
 
     def test_init_placement_list_width_inf_0(self): #1071
         test_placement = [{"id": "Object1", "x": 1, "y": 2, "width": 10, "length": 5},
@@ -128,7 +128,7 @@ class TestLayoutInit(unittest.TestCase):
         with self.assertRaises(ValueError) as te:
             Layout(max_width=1, max_length=2, placement=test_placement)
         the_exception = te.exception
-        self.assertEqual(the_exception.args[0], f"width must be greater than 0, got {test_placement[1]['width']} in {test_placement[1]}")
+        self.assertEqual(the_exception.args[0], f"width must be equal or greater than 0, got {test_placement[1]['width']}")
 
     def test_init_placement_wrong_type_in_list_length(self): #1080
         test_placement = [{"id": "Object1", "x": 1, "y": 2, "width": 10, "length": 5},
@@ -136,7 +136,7 @@ class TestLayoutInit(unittest.TestCase):
         with self.assertRaises(TypeError) as te:
             Layout(max_width=1, max_length=2, placement=test_placement)
         the_exception = te.exception
-        self.assertEqual(the_exception.args[0], f"length must be an int, got {type(test_placement[1]['length']).__name__}")
+        self.assertEqual(the_exception.args[0], f"length must be int, got {type(test_placement[1]['length']).__name__}")
 
     def test_init_placement_list_length_inf_0(self): #1081
         test_placement = [{"id": "Object1", "x": 1, "y": 2, "width": 10, "length": 5},
@@ -144,6 +144,6 @@ class TestLayoutInit(unittest.TestCase):
         with self.assertRaises(ValueError) as te:
             Layout(max_width=1, max_length=2, placement=test_placement)
         the_exception = te.exception
-        self.assertEqual(the_exception.args[0], f"length must be greater than 0, got {test_placement[1]['length']} in {test_placement[1]}")
+        self.assertEqual(the_exception.args[0], f"length must be equal or greater than 0, got {test_placement[1]['length']}")
 
     

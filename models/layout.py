@@ -1,9 +1,10 @@
 from typing import List, Dict
+import numpy as np
 
 class Layout:
     """
     Represent the layout in our optimization problem.
-    It will also define the rules.
+    It willlso define the rules.
 
     Parameters
     ----------
@@ -23,54 +24,74 @@ class Layout:
             placement = []
 
         # Tests on max_width
-        if not isinstance(max_width, int):
-            raise TypeError(f"max_width must be an int, got {type(max_width).__name__}")
-        if max_width <= 0:
-            raise ValueError(f"max_width must be greater than 0, got {max_width}")
+        self.validate_typing(max_width, "max_width", int)
+        self.validate_positive(max_width, "max_width", False)
         
         # Tests on max_length
-        if not isinstance(max_length, int):
-            raise TypeError(f"max_length must be an int, got {type(max_length).__name__}")
-        if max_length <= 0:
-            raise ValueError(f"max_length must be greater than 0, got {max_length}")
+        self.validate_typing(max_length, "max_length", int)
+        self.validate_positive(max_length, "max_length", False)
         
         # Tests on placement
-        if not isinstance(placement, list):
-            raise TypeError(f"placement must be a list, got {type(placement).__name__}")
+        self.validate_typing(placement, "placement", list)
         if placement != []:
             for rect_placed in placement :
                 if not set(rect_placed.keys()).issubset({'id', 'x', 'y', 'width', 'length'}):
                     missing_keys = ['id', 'x', 'y', 'width', 'length'] - rect_placed.keys()
-                    raise KeyError(f"Missing keys in {rect_placed} : {missing_keys}")
+                    raise KeyError(f"Missing keys in {rect_placed.keys()} : {missing_keys}")
                 
-                if not isinstance(rect_placed['id'], str):
-                    raise TypeError(f"id must be a str, got {type(rect_placed['id']).__name__}")
-                
-                if not isinstance(rect_placed['x'], int):
-                    raise TypeError(f"x must be an int, got {type(rect_placed['x']).__name__}")
-                if rect_placed['x'] < 0:
-                    raise ValueError(f"x must be equal or greater than 0, got {rect_placed['x']} in {rect_placed}")
-                
-                if not isinstance(rect_placed['y'], int):
-                    raise TypeError(f"y must be an int, got {type(rect_placed['y']).__name__}")
-                if rect_placed['y'] < 0:
-                    raise ValueError(f"y must be equal or greater than 0, got {rect_placed['y']} in {rect_placed}")
-                
-                if not isinstance(rect_placed['width'], int):
-                    raise TypeError(f"width must be an int, got {type(rect_placed['width']).__name__}")
-                if rect_placed['width'] <= 0:
-                    raise ValueError(f"width must be greater than 0, got {rect_placed['width']} in {rect_placed}")
+                self.validate_typing(rect_placed['id'], "id", str)
+                self.validate_typing(rect_placed['x'], "x", int)
+                self.validate_positive(rect_placed['x'], "x", False)
+                self.validate_typing(rect_placed['y'], "y", int)
+                self.validate_positive(rect_placed['y'], "y", False)
+                self.validate_typing(rect_placed['width'], "width", int)
+                self.validate_positive(rect_placed['width'], "width", True)
+                self.validate_typing(rect_placed['length'], "length", int)
+                self.validate_positive(rect_placed['length'], "length", True)
 
-                
-                if not isinstance(rect_placed['length'], int):
-                    raise TypeError(f"length must be an int, got {type(rect_placed['length']).__name__}")
-                if rect_placed['length'] <= 0:
-                    raise ValueError(f"length must be greater than 0, got {rect_placed['length']} in {rect_placed}")
-        
+        # create a 2d plan with zeroes :
+        self.tab_layout = np.zeros((max_width, max_length))
+        self.allowed_placement = [(0, 0)]
+
         self.max_width = max_width
         self.max_length = max_length
         self.placement = placement
+        
+
+    def validate_positive(self, variable, variable_name, allow_zero: bool):
+        if allow_zero:
+            if variable < 0:
+                raise ValueError(f"{variable_name} must be equal or greater than 0, got {variable}")
+        else :
+            if variable <= 0:
+                raise ValueError(f"{variable_name} must be greater than 0, got {variable}")
+    
+
+
+    def validate_typing(self, variable, variable_name: str, variable_type: type):
+        if not isinstance(variable, variable_type):
+            raise TypeError(f"{variable_name} must be {variable_type.__name__}, got {type(variable).__name__}")
 
     def remove_last_rectangle(self):
         if self.placement:
             self.placement.pop()
+
+    def remove_rectangle(self, x, y, targeted_placement):
+        for i in range(y):
+            for j in range(x):
+                self.tab_layout[targeted_placement[1]+i, targeted_placement[0]+j] -= 1
+
+    def place_rectangle(self, x, y, targeted_placement):
+        for i in range(y):
+            for j in range(x):
+                self.tab_layout[targeted_placement[1]+i, targeted_placement[0]+j] += 1
+                if self.tab_layout[targeted_placement[1]+i, targeted_placement[0]+j] != 1:
+                    if i == 0:
+                        self.remove_rectangle(x=j+1, y=1, targeted_placement=targeted_placement)
+                    else :
+                        self.remove_rectangle(x, i+1, targeted_placement)
+                    return(False)
+        self.allowed_placement.remove(targeted_placement)
+        self.allowed_placement.append((x+targeted_placement[0], targeted_placement[1]))
+        self.allowed_placement.append((targeted_placement[0], y + targeted_placement[1]))
+        return(True)
