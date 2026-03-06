@@ -1,4 +1,4 @@
-from utils.packing_solver import solve_packing
+from utils.ORTOOLS_packing_solver import solve_packing
 
 if __name__ == "__main__":
     width = 10
